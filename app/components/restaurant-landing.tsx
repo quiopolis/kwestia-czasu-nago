@@ -20,6 +20,7 @@ import {
   Sparkles,
   Star,
   UtensilsCrossed,
+  Users,
   Wine,
   X,
 } from "lucide-react";
@@ -34,6 +35,11 @@ type NavLink = {
 type InfoCard = {
   title: string;
   description: string;
+  icon: ComponentType<{ className?: string }>;
+};
+
+type OccasionCard = {
+  title: string;
   icon: ComponentType<{ className?: string }>;
 };
 
@@ -142,6 +148,33 @@ const offerCards: InfoCard[] = [
     title: "Wydarzenia i przyjęcia",
     description:
       "Miejsce dobre na rodzinne spotkania, kameralne przyjęcia i spokojne wieczory.",
+    icon: Sparkles,
+  },
+];
+
+const occasionCards: OccasionCard[] = [
+  {
+    title: "Śniadanie i brunch",
+    icon: Coffee,
+  },
+  {
+    title: "Lunch w tygodniu",
+    icon: CalendarDays,
+  },
+  {
+    title: "Romantyczna kolacja",
+    icon: Wine,
+  },
+  {
+    title: "Rodzinne spotkanie",
+    icon: Users,
+  },
+  {
+    title: "Słoiki i jedzenie na wynos",
+    icon: Package,
+  },
+  {
+    title: "Kameralne przyjęcia",
     icon: Sparkles,
   },
 ];
@@ -729,6 +762,10 @@ export default function RestaurantLanding() {
     menuCategories[0]?.id ?? "breakfast-brunch",
   );
   const [activeMenuPhoto, setActiveMenuPhoto] = useState<MenuPhoto | null>(null);
+  const [formNotice, setFormNotice] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     const onScroll = () => setHasScrolled(window.scrollY > 18);
@@ -759,6 +796,66 @@ export default function RestaurantLanding() {
 
   const onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFormNotice(null);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const name = String(formData.get("name") ?? "").trim();
+    const phone = String(formData.get("phone") ?? "").trim();
+    const guests = String(formData.get("guests") ?? "").trim();
+    const date = String(formData.get("date") ?? "").trim();
+    const time = String(formData.get("time") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+
+    if (!name || !phone || !guests || !date) {
+      setFormNotice({
+        type: "error",
+        message: "Uzupełnij pola: imię, telefon, liczba osób oraz data.",
+      });
+      return;
+    }
+
+    const guestsCount = Number(guests);
+    if (!Number.isFinite(guestsCount) || guestsCount < 1) {
+      setFormNotice({
+        type: "error",
+        message: "Liczba osób musi być większa od zera.",
+      });
+      return;
+    }
+
+    const compactPhone = phone.replace(/[\s()-]/g, "");
+    if (!/^\+?\d{6,15}$/.test(compactPhone)) {
+      setFormNotice({
+        type: "error",
+        message: "Podaj poprawny numer telefonu.",
+      });
+      return;
+    }
+
+    const mailSubject = encodeURIComponent(
+      "Zapytanie o rezerwację — Kwestia Czasu / NAGO",
+    );
+    const mailBody = encodeURIComponent(
+      [
+        `Imię: ${name}`,
+        `Telefon: ${phone}`,
+        `Liczba osób: ${guests}`,
+        `Data: ${date}`,
+        `Godzina: ${time || "Nie podano"}`,
+        `E-mail: ${email || "Nie podano"}`,
+        `Wiadomość: ${message || "Brak dodatkowej wiadomości."}`,
+      ].join("\n"),
+    );
+
+    window.location.href = `mailto:neobistrokwestiaczasu@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+    setFormNotice({
+      type: "success",
+      message: "Wiadomość zostanie przygotowana w programie pocztowym.",
+    });
+    form.reset();
   };
 
   const activeMenuCategory =
@@ -828,7 +925,7 @@ export default function RestaurantLanding() {
   );
 
   return (
-    <div className="bg-[var(--cream)] text-[var(--ink)]">
+    <div className="bg-[var(--cream)] pb-24 text-[var(--ink)] md:pb-28 lg:pb-0">
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           hasScrolled
@@ -1325,7 +1422,10 @@ export default function RestaurantLanding() {
           </div>
         )}
 
-        <section id="gallery" className="border-y border-[var(--line)] bg-[var(--paper)]">
+        <section
+          id="gallery"
+          className="scroll-mt-32 border-y border-[var(--line)] bg-[var(--paper)]"
+        >
           <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
             <motion.div
               initial="hidden"
@@ -1490,6 +1590,50 @@ export default function RestaurantLanding() {
           </div>
         </section>
 
+        <section id="occasions" className="scroll-mt-32 border-b border-[var(--line)] bg-[var(--paper)]">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-10 lg:py-20">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={riseIn}
+              transition={{ duration: 0.52 }}
+              className="max-w-3xl"
+            >
+              <span className="section-kicker">Na jaką okazję?</span>
+              <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">
+                Na śniadanie, kolację i wszystko pomiędzy.
+              </h2>
+              <p className="mt-4 leading-relaxed text-[var(--ink-soft)]">
+                Kwestia Czasu / N A G O sprawdza się wtedy, gdy chcesz zjeść
+                spokojnie, spotkać się przy winie, zamówić coś na wynos albo
+                zorganizować kameralne przyjęcie.
+              </p>
+            </motion.div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {occasionCards.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <motion.article
+                    key={item.title}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.38, delay: index * 0.04 }}
+                    className="group rounded-2xl border border-[var(--line)] bg-[var(--cream)] px-4 py-4 transition hover:border-[var(--wood)]/50 hover:bg-white"
+                  >
+                    <div className="inline-flex items-center gap-2">
+                      <Icon className="size-4 text-[var(--wood)]" />
+                      <p className="text-sm font-medium text-[var(--ink)]">{item.title}</p>
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         <section id="reviews" className="scroll-mt-32">
           <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
             <motion.div
@@ -1591,7 +1735,13 @@ export default function RestaurantLanding() {
                 </label>
                 <label className="form-field">
                   <span>Telefon</span>
-                  <input type="tel" name="phone" placeholder="600 000 000" required />
+                  <input
+                    type="tel"
+                    name="phone"
+                    inputMode="tel"
+                    placeholder="600 000 000"
+                    required
+                  />
                 </label>
                 <label className="form-field">
                   <span>Liczba osób</span>
@@ -1603,16 +1753,11 @@ export default function RestaurantLanding() {
                 </label>
                 <label className="form-field">
                   <span>Godzina</span>
-                  <input type="time" name="time" required />
+                  <input type="time" name="time" />
                 </label>
                 <label className="form-field">
                   <span>E-mail</span>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="twoj@email.com"
-                    required
-                  />
+                  <input type="email" name="email" placeholder="twoj@email.com" />
                 </label>
               </div>
               <label className="form-field mt-4 block">
@@ -1629,6 +1774,16 @@ export default function RestaurantLanding() {
               >
                 Wyślij zapytanie
               </button>
+              {formNotice && (
+                <p
+                  aria-live="polite"
+                  className={`mt-3 text-sm ${
+                    formNotice.type === "error" ? "text-red-200" : "text-[var(--beige)]"
+                  }`}
+                >
+                  {formNotice.message}
+                </p>
+              )}
             </motion.form>
           </div>
         </section>
@@ -1726,6 +1881,32 @@ export default function RestaurantLanding() {
           </div>
         </section>
       </main>
+
+      <div className="fixed inset-x-0 bottom-4 z-[65] px-3 sm:px-5 lg:hidden">
+        <div className="mx-auto grid w-full max-w-xl grid-cols-3 gap-2 rounded-2xl border border-white/12 bg-[rgba(21,21,21,0.84)] p-2 text-[var(--cream)] shadow-[0_18px_36px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+          <a
+            href="tel:600575050"
+            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2 text-xs font-semibold transition hover:bg-white/12"
+          >
+            <Phone className="size-3.5" />
+            Zadzwoń
+          </a>
+          <a
+            href="#menu"
+            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2 text-xs font-semibold transition hover:bg-white/12"
+          >
+            <UtensilsCrossed className="size-3.5" />
+            Menu
+          </a>
+          <a
+            href="#reservation"
+            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl bg-[var(--accent)] px-2 text-xs font-semibold text-[var(--ink)] transition hover:bg-[var(--wood)]"
+          >
+            <CalendarDays className="size-3.5" />
+            Rezerwuj
+          </a>
+        </div>
+      </div>
 
       <footer className="bg-[var(--ink)]">
         <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-[var(--beige)] sm:px-6 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-10">
