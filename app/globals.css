@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans-stack: "Manrope", "Inter", "Segoe UI", system-ui, -apple-system,
+    sans-serif;
+  --font-serif-stack: "Cormorant Garamond", "Playfair Display", "Fraunces",
+    Georgia, "Times New Roman", serif;
+  --cream: #f7f2e8;
+  --ink: #151515;
+  --brown: #2a1c14;
+  --wood: #8a5a38;
+  --olive: #66724a;
+  --accent: #b7794a;
+  --beige: #e7d8c3;
+  --paper: #fcf8f2;
+  --line: rgba(42, 28, 20, 0.14);
+  --ink-soft: rgba(21, 21, 21, 0.76);
+}
+
+@theme inline {
+  --font-sans: var(--font-sans-stack);
+  --font-serif: var(--font-serif-stack);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans-stack);
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--cream) 74%, white 26%);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 0.38rem 0.8rem;
+  color: var(--ink-soft);
+}
+
+.section-kicker-dark {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--beige);
+}
+
+.form-field span {
+  display: inline-block;
+  margin-bottom: 0.38rem;
+  font-size: 0.78rem;
+  color: rgba(247, 242, 232, 0.86);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cream);
+  border-radius: 0.95rem;
+  outline: none;
+  font-size: 0.92rem;
+  padding: 0.72rem 0.86rem;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: rgba(247, 242, 232, 0.56);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: rgba(231, 216, 195, 0.66);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
