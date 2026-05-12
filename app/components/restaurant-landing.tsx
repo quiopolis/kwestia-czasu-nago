@@ -25,7 +25,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { ComponentType, FormEvent, useEffect, useState } from "react";
+import { ComponentType, FormEvent, useEffect, useRef, useState } from "react";
 
 type NavLink = {
   href: string;
@@ -763,6 +763,42 @@ const riseIn = {
   hidden: { opacity: 0, y: 34 },
   visible: { opacity: 1, y: 0 },
 };
+
+function ReelVideo({ src, title }: { src: string; title: string }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    video.muted = true;
+    video.playsInline = true;
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Some mobile browsers can briefly block autoplay.
+        // Keep the video element visible without fallback image.
+      });
+    }
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      className="h-full w-full object-cover"
+      aria-label={title}
+    />
+  );
+}
 
 export default function RestaurantLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1506,16 +1542,7 @@ export default function RestaurantLanding() {
                   className="min-w-0 rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-3 shadow-[0_20px_50px_rgba(21,21,21,0.14)]"
                 >
                   <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[22px] border border-[var(--line)] bg-black/5">
-                    <video
-                      src={reel.videoSrc}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                      className="h-full w-full object-cover"
-                      aria-label={reel.label}
-                    />
+                    <ReelVideo src={reel.videoSrc} title={reel.label} />
                   </div>
                   <p className="pt-3 text-sm font-medium text-[var(--ink-soft)] md:text-base">
                     {reel.label}
