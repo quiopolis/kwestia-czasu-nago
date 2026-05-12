@@ -683,10 +683,22 @@ const galleryItems: GalleryItem[] = [
 ];
 
 const reels = [
-  { src: "/images/video/1 (1).mp4", label: "Z kuchni" },
-  { src: "/images/video/1 (2).mp4", label: "Weekendowe smaki" },
-  { src: "/images/video/1 (3).mp4", label: "Przygotowanie talerza" },
-  { src: "/images/video/1 (4).mp4", label: "Celebruj chwile" },
+  {
+    videoSrc: "/image/video/1%20(1).mp4",
+    label: "Z kuchni",
+  },
+  {
+    videoSrc: "/image/video/1%20(2).mp4",
+    label: "Weekendowe smaki",
+  },
+  {
+    videoSrc: "/image/video/1%20(3).mp4",
+    label: "Przygotowanie talerza",
+  },
+  {
+    videoSrc: "/image/video/1%20(4).mp4",
+    label: "Celebruj chwile",
+  },
 ];
 
 const reviews = [
@@ -1468,7 +1480,7 @@ export default function RestaurantLanding() {
         </section>
 
         <section id="reels" className="scroll-mt-32">
-          <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8 lg:py-28">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -1478,32 +1490,34 @@ export default function RestaurantLanding() {
               className="mb-12 max-w-3xl"
             >
               <span className="section-kicker">Rolki</span>
-              <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-5xl">
+              <h2 className="mt-3 font-serif text-3xl leading-tight md:text-4xl lg:text-5xl">
                 Kulisy kuchni i chwile przy stole
               </h2>
             </motion.div>
 
-            <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 min-[390px]:grid-cols-2 md:grid-cols-2 md:gap-6 lg:grid-cols-4 lg:gap-7">
               {reels.map((reel, index) => (
                 <motion.article
-                  key={reel.src}
+                  key={reel.label}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.45, delay: index * 0.05 }}
-                  className="w-[78vw] max-w-[18rem] snap-start rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-3 shadow-[0_20px_50px_rgba(21,21,21,0.14)] sm:w-full sm:max-w-none"
+                  className="min-w-0 rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-3 shadow-[0_20px_50px_rgba(21,21,21,0.14)]"
                 >
-                  <div className="relative overflow-hidden rounded-[1.4rem] border border-[var(--line)] bg-black">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[22px] border border-[var(--line)] bg-black/5">
                     <video
-                      src={assetPath(reel.src)}
+                      src={reel.videoSrc}
                       autoPlay
                       muted
                       loop
                       playsInline
-                      className="h-[24rem] w-full object-cover sm:h-[23rem]"
+                      preload="metadata"
+                      className="h-full w-full object-cover"
+                      aria-label={reel.label}
                     />
                   </div>
-                  <p className="pt-3 text-sm font-medium text-[var(--ink-soft)]">
+                  <p className="pt-3 text-sm font-medium text-[var(--ink-soft)] md:text-base">
                     {reel.label}
                   </p>
                 </motion.article>
